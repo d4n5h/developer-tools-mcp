@@ -1,4 +1,4 @@
-# Development Tools MCP
+# Developer Tools MCP
 
 A comprehensive Model Context Protocol (MCP) server providing extensive development and browser automation capabilities through Puppeteer. This server enables seamless interaction with browsers and system tools directly from the Cursor IDE and other MCP clients, without requiring additional browser installations or add-ons.
 
@@ -101,7 +101,7 @@ This MCP server provides a rich set of tools for browser automation and web deve
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/modelcontextprotocol/test-mcp.git
+   git clone https://github.com/d4n5h/developer-tools-mcp.git
    cd test-mcp
    ```
 
