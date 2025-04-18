@@ -11,6 +11,6 @@ const browser = await puppeteer.launch({ headless: false, devtools: true });
 const pages = await browser.pages();
 const firstPage = pages[0];
 
-firstPage.goto("http://localhost:3001/index.html");
+firstPage.goto(`http://localhost:${process.env.PORT || 3001}/index.html`);
 
 export { browser };
