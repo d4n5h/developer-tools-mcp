@@ -25,7 +25,7 @@ export function registerTools({ pageManager, server, sshManager }: ToolsConfig):
   screenshotTools({ server, pageManager });
   cookiesTools({ server, pageManager });
   viewTools({ server, pageManager });
-  miscTools({ server, pageManager });
+  miscTools({ server });
   debugTools({ server, pageManager });
   analysisTools({ server, pageManager });
   elementsTools({ server, pageManager });
