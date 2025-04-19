@@ -1,6 +1,6 @@
 {
   "name": "developer-tools-mcp",
-  "version": "1.0.50",
+  "version": "1.0.51",
   "main": "src/index.ts",
   "type": "module",
   "bin": {
@@ -35,12 +35,17 @@
     "puppeteer": "^24.6.1",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-adblocker": "^2.13.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2",
-    "ws": "^8.18.1"
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   },
   "devDependencies": {
     "@types/ws": "^8.18.1",
     "bun-types": "latest"
   },
+  "trustedDependencies": [
+    "puppeteer",
+    "puppeteer-extra",
+    "puppeteer-extra-plugin-adblocker",
+    "puppeteer-extra-plugin-stealth"
+  ],
   "module": "src/index.ts"
 }
