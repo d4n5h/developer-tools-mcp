@@ -1,6 +1,7 @@
 import { Elysia } from "elysia";
 import { staticPlugin } from '@elysiajs/static';
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer  } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { SERVER_CONFIG } from "../config";
 import { PageManager } from "../services/PageManager";
 import { browser } from "../services/BrowserService";
@@ -27,6 +28,9 @@ export function createServer() {
 
   // Setup routes with shared transport map
   const transports = new Map();
+
+  const transport = new StdioServerTransport();
+  mcpServer.connect(transport);
   setupSSERoutes(app, mcpServer, transports);
 
   return { app, browser };
