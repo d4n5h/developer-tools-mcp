@@ -1,4 +1,4 @@
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp";
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { SSHManager } from "../services/SSHManager";
 import { z } from "zod";
 

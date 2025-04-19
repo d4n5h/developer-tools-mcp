@@ -1,8 +1,9 @@
 {
   "name": "developer-tools-mcp",
   "version": "1.0.54",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
   "bin": {
 		"developer-tools-mcp": "./dist/index.js"
 	},
