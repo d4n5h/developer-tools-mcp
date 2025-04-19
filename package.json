@@ -11,6 +11,19 @@
     "dev": "bun run --watch src/index.ts",
     "start": "bun run src/index.ts"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/d4n5h/developer-tools-mcp.git"
+  },
+  "keywords": [
+    "mcp",
+    "developer-tools-mcp",
+    "mcp-server",
+    "developer-tools",
+    "mcp-server-tools",
+    "dev",
+    "developer"
+  ],
   "dependencies": {
     "@elysiajs/static": "^1.2.0",
     "@modelcontextprotocol/sdk": "^1.10.0",
