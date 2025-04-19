@@ -1,4 +1,4 @@
-
+#!/usr/bin/env node
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { SSHManager } from "./services/SSHManager";
 import { registerTools } from "./lib/toolLoader";
