@@ -1,27 +1,20 @@
-import { createServer } from "./server/setup";
-import { logger } from "./lib/Logger";
-// Create and configure server
-const { app, browser } = createServer();
 
-const port = Number(process.env.PORT || 3001);
-// Start the server
-app.listen(port, () => {
-  logger.info(`MCP server running at http://localhost:${port}`);
-  logger.info(`- GET /sse for SSE connection`);
-  logger.info(`- POST /messages?sessionId=<ID> for messages`);
-});
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { SSHManager } from "@services/SSHManager";
+import { SERVER_CONFIG } from "./config";
+import { registerTools } from "@server/tools";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { browser } from "@services/BrowserService";
+import { PageManager } from "@services/PageManager";
 
-// Graceful shutdown handlers
-const shutdown = async (signal: string) => {
-  logger.error(`Received ${signal} signal. Shutting down...`);
-  await browser.close();
-  process.exit(signal === 'uncaughtException' ? 1 : 0);
-};
+const pageManager = new PageManager(browser);
+const sshManager = new SSHManager();
 
-process.on('SIGINT', () => shutdown('SIGINT'));
-process.on('SIGTERM', () => shutdown('SIGTERM'));
-process.on('SIGQUIT', () => shutdown('SIGQUIT'));
-process.on('uncaughtException', (error) => {
-  logger.error('Uncaught exception:', error);
-  shutdown('uncaughtException');
-});
+// Create MCP server
+const server = new McpServer(SERVER_CONFIG);
+
+// Register all tools
+registerTools({ pageManager, server, sshManager });
+
+const transport = new StdioServerTransport();
+await server.connect(transport);
