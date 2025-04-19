@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import type { PageManager } from "@services/PageManager";
-import type { SSHManager } from "@services/SSHManager";
+import type { PageManager } from "../services/PageManager";
+import type { SSHManager } from "../services/SSHManager";
 import {
   pageManagementTools,
   screenshotTools,
@@ -12,7 +12,7 @@ import {
   elementsTools,
   interactionsTools,
   sshTools
-} from "@tools/index";
+} from "../tools/index";
 
 interface ToolsConfig {
   pageManager: PageManager;

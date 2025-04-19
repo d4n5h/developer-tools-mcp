@@ -1,5 +1,5 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp";
-import type { PageManager } from "@services/PageManager";
+import type { PageManager } from "../services/PageManager";
 import { z } from "zod";
 
 export const cookiesTools = ({ pageManager, server }: { pageManager: PageManager, server: McpServer }) => {
