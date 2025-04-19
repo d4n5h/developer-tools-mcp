@@ -1,6 +1,6 @@
 {
   "name": "developer-tools-mcp",
-  "version": "1.0.51",
+  "version": "1.0.52",
   "main": "src/index.ts",
   "type": "module",
   "bin": {
