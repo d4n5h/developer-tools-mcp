@@ -97,8 +97,16 @@ This MCP server provides a rich set of tools for browser automation and web deve
 
 ### Setup
 
-```bash
-npx developer-tools-mcp
+Since this server has more than 40 tools, it's recommended to use [MCP HUB MCP Server](https://github.com/warpdev/mcp-hub-mcp)
+
+```json
+{
+  "mcpServers": {
+    "developer-tools-mcp": {
+      "command": "npx -y developer-tools-mcp"
+    }
+  }
+}
 ```
 
 ## Contributing
