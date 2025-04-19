@@ -196,7 +196,7 @@ export const pageManagementTools = ({ pageManager, server }: { pageManager: Page
   // Wait for page load
   server.tool(
     "wait-for-page-load",
-    "This tool waits for the page to load",
+    "This tool waits for the page to load, don't use it if you already used the navigate-to-url tool before it because it will wait for the page to load again.",
     {
       waitUntil: z.enum(["domcontentloaded", "networkidle0"]).optional().describe("The wait until to use. If not provided, the default will be used."),
       pageId: z.string().optional().describe("The ID of the page to wait for. If not provided, the active page will be used.")
