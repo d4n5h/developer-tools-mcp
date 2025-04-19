@@ -1,5 +1,5 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp";
-import type { SSHManager } from "@services/SSHManager";
+import type { SSHManager } from "../services/SSHManager";
 import { z } from "zod";
 
 export const sshTools = ({ sshManager, server }: { sshManager: SSHManager, server: McpServer }) => {

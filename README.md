@@ -93,38 +93,13 @@ This MCP server provides a rich set of tools for browser automation and web deve
 
 ### Prerequisites
 
-- [Bun](https://bun.sh/) runtime
-- [Git](https://git-scm.com/)
+- [Node.js](https://nodejs.org/) runtime (v18 or higher)
 
 ### Setup
 
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/d4n5h/developer-tools-mcp.git
-   cd test-mcp
-   ```
-
-2. Install dependencies:
-
-   ```bash
-   bun install
-   ```
-
-3. Start the server:
-
-   ```bash
-   bun start
-   ```
-
-## Integration with Cursor IDE
-
-1. Open Cursor Settings
-2. Navigate to the "Features" tab
-3. Scroll to the "Model Context Protocol" section
-4. Click "+ Add new MCP server"
-5. Enter the server URL: `http://localhost:3001/sse`
-6. Click "Add" to complete the integration
+```bash
+npx developer-tools-mcp
+```
 
 ## Contributing
 
