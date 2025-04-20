@@ -3,6 +3,10 @@ import { NodeSSH } from 'node-ssh';
 export class SSHManager {
   private connections: Map<string, NodeSSH> = new Map();
   
+  public getAllConnections() {
+    return Array.from(this.connections.keys());
+  }
+
   public async connect({ id, host, username, password, privateKey }: { id?: string, host: string, username: string, password?: string, privateKey?: string }) {
     if(!id) id = crypto.randomUUID();
     if (this.connections.has(id)) throw new Error("Connection already exists");

@@ -54,10 +54,10 @@ export const pageManagementTools = ({ pageManager, server }: { pageManager: Page
     async () => {
       const pages = pageManager.getAllPageIds();
       const activePage = pageManager.getActivePageId();
-      let text = `Pages:\n`;
+      let text = `Pages:\n\n| ID | Status | URL | Title |\n| --- | --- | --- | --- |\n`;
       for (const id of pages) {
         const page = pageManager.getPage(id);
-        text += `\t-${id}:\n\t\tActive: ${id === activePage ? 'yes' : 'no'}\n\t\tURL: ${page?.pageUrl || 'no url'}\n\t\tTitle: ${page?.pageTitle || 'no title'}\n`;
+        text += `| ${id} | ${id === activePage ? 'Active' : 'Inactive'} | ${page?.pageUrl || 'no url'} | ${page?.pageTitle || 'no title'} |\n`;
       }
       return {
         content: [{
@@ -196,7 +196,7 @@ export const pageManagementTools = ({ pageManager, server }: { pageManager: Page
   // Wait for page load
   server.tool(
     "wait-for-page-load",
-    "This tool waits for the page to load, don't use it if you already used the navigate-to-url tool before it because it will wait for the page to load again.",
+    "This tool waits for the page to load, important!: don't use it if you already used the navigate-to-url tool before it because it will wait for the page to load again.",
     {
       waitUntil: z.enum(["domcontentloaded", "networkidle0"]).optional().describe("The wait until to use. If not provided, the default will be used."),
       pageId: z.string().optional().describe("The ID of the page to wait for. If not provided, the active page will be used.")

@@ -3,6 +3,20 @@ import type { SSHManager } from "../services/SSHManager";
 import { z } from "zod";
 
 export const sshTools = ({ sshManager, server }: { sshManager: SSHManager, server: McpServer }) => {
+  // List all connections
+  server.tool(
+    "ssh-list-connections",
+    "List all connections",
+    {},
+    async () => {
+      const connections = sshManager.getAllConnections();
+      return {
+        content: [{ type: "text", text: `Connections: ${JSON.stringify(connections)}` }]
+      };
+    }
+  );
+
+
   // Connect to a remote server via SSH
   server.tool(
     "ssh-connect",

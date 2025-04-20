@@ -1,6 +1,43 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { PageManager } from "../services/PageManager";
 import { z } from "zod";
+import { Page, ElementHandle } from "puppeteer";
+import jsdom from "jsdom";
+
+async function getFullXPaths(handles: ElementHandle[]) {
+  return Promise.all(
+    handles.map(handle =>
+      handle.evaluate(el => {
+        // Recursive helper to build the XPath for a DOM node
+        function getXPath(node: Element): string {
+          // If this node is the document root
+          if (node === document.documentElement) {
+            return '/html';
+          }
+          // If this node is the body element
+          if (node === document.body) {
+            return '/html/body';
+          }
+          // Compute this node's position among siblings of the same tag
+          const parent = node.parentNode;
+          if (!parent || !(parent instanceof Element)) {
+            return '';
+          }
+          const siblings = Array.from(parent.childNodes)
+            .filter(n => n instanceof Element && n.nodeName === node.nodeName);
+          const index = siblings.indexOf(node) + 1;
+          // Build up the path of parent + current node
+          return getXPath(parent) +
+            '/' +
+            node.nodeName.toLowerCase() +
+            (siblings.length > 1 ? `[${index}]` : '');
+        }
+
+        return getXPath(el);
+      })
+    )
+  );
+}
 
 export const elementsTools = ({ pageManager, server }: { pageManager: PageManager, server: McpServer }) => {
   // Get element text
@@ -314,4 +351,58 @@ export const elementsTools = ({ pageManager, server }: { pageManager: PageManage
       };
     }
   );
+
+  // Get all clickable elements
+  server.tool(
+    "get-all-clickable-elements",
+    "This tool gets all clickable elements, it can be used to find inputs (for search or fill forms), buttons, links, etc.",
+    {
+      pageId: z.string().optional().describe("The ID of the page to get the clickable elements of. If not provided, the active page will be used.")
+    },
+    async ({ pageId }) => {
+      const pageData = pageManager.getPage(pageId);
+      if (!pageData) {
+        return {
+          content: [{ type: "text", text: "No active page found" }]
+        };
+      }
+
+      const handles = await pageData.page.$$(`button, a, input[type='button'], input[type='submit'], input[type='reset'], input[type='image'], input[type='file'], input[type='checkbox'], input[type='radio'], input[type='color'], input[type='date'], input[type='datetime-local'], input[type='email'], input[type='month'], input[type='number'], input[type='password'], input[type='range'], input[type='search'], input[type='tel'], input[type='text'], input[type='time'], input[type='url'], input[type='week']`);
+
+      // Get selectors (not xpath) for each element
+      const elements = [];
+      const xpaths = await getFullXPaths(handles);
+      for (let i = 0; i < handles.length; i++) {
+        const element = await handles[i].evaluate(el => {
+
+          const { top, left, bottom, right } = el.getBoundingClientRect();
+
+          const height = document.defaultView?.getComputedStyle(el).height
+          const width = document.defaultView?.getComputedStyle(el).width
+          return {
+            label: el.getAttribute("aria-label") || el.getAttribute("placeholder") || el.getAttribute("title") || el.getAttribute("alt") || el.getAttribute("label") || null,
+            tag: el.tagName,
+            id: el.id,
+            top,
+            left,
+            bottom,
+            right,
+            height,
+            width
+          };
+        });
+        elements.push({
+          ...element,
+          xpath: xpaths[i]
+        });
+      }
+
+      return {
+        content: [{ type: "text", text: `Clickable elements:\n${JSON.stringify(elements, null, 2)}` }]
+      };
+    }
+  );
+
+  // Get all 
 };
+
