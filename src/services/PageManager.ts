@@ -7,6 +7,7 @@ export interface PageData {
   pageUrl: string | null;
   pageTitle: string | null;
   dialog: Dialog | null;
+  purpose: string | null;
 }
 
 export class PageManager {
@@ -18,8 +19,8 @@ export class PageManager {
     this.browser = browser;
   }
 
-  async createPage(pageId?: string): Promise<string> {
-    const id = pageId || crypto.randomUUID();
+  async createPage(purpose?: string): Promise<string> {
+    const id = crypto.randomUUID();
     const page = await this.browser.newPage();
 
     const pageData: PageData = {
@@ -28,7 +29,8 @@ export class PageManager {
       pageErrors: [],
       pageUrl: null,
       pageTitle: null,
-      dialog: null
+      dialog: null,
+      purpose: purpose || null
     };
 
     // Set up console and error listeners
