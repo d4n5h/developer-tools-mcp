@@ -4,25 +4,41 @@ import { SSHManager } from "./services/SSHManager";
 import { registerTools } from "./lib/toolLoader";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { PageManager } from "./services/PageManager";
+import type { Browser } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
+
+const browserState: {
+  browser: Browser | null,
+  pageManager: PageManager | null
+} = {
+  browser: null,
+  pageManager: null
+};
+
+
+async function setupBrowser() {
+  const browser = await puppeteer.launch({ headless: false, devtools: true });
+  const pageManager = new PageManager(browser);
+
+  browser.on('disconnected', async () => {
+    await setupBrowser();
+  });
+
+  browserState.browser = browser;
+  browserState.pageManager = pageManager;
+}
+
 async function startServer() {
   puppeteer.use(StealthPlugin());
   puppeteer.use(AdblockerPlugin());
 
-  let browser = await puppeteer.launch({ headless: false, devtools: true });
-  let pageManager = new PageManager(browser);
-
-  // Restart the browser if it disconnects
-  browser.on('disconnected', async () => {
-    browser = await puppeteer.launch({ headless: false, devtools: true });
-    pageManager = new PageManager(browser);
-  });
+  await setupBrowser();
 
   // Gracefully close the browser when the server is stopped
   process.on('SIGINT', async () => {
-    await browser.close();
+    await browserState.browser?.close();
     process.exit(0);
   });
 
@@ -36,7 +52,7 @@ async function startServer() {
   });
 
   // Register all tools
-  registerTools({ pageManager, server, sshManager });
+  registerTools({ pageManager: browserState.pageManager!, server, sshManager });
 
   const transport = new StdioServerTransport();
   await server.connect(transport);
