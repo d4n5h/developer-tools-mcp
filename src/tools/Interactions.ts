@@ -2,7 +2,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { PageManager } from "../services/PageManager";
 import { z } from "zod";
 import { ElementHandle, KeyInput } from "puppeteer";
-
+import { KEYS_MAP, MODIFIER_KEYS_MAP } from "../constants/keys";
 export const interactionsTools = ({ pageManager, server }: { pageManager: PageManager, server: McpServer }) => {
   // Click element
   server.tool(
@@ -167,24 +167,61 @@ export const interactionsTools = ({ pageManager, server }: { pageManager: PageMa
     }
   );
 
-  // Send keyboard shortcut
+  // Press key
   server.tool(
-    "send-keyboard-shortcut",
-    "This tool sends a keyboard shortcut",
+    "press-key",
+    "This tool presses a key on the keyboard",
     {
-      keys: z.string().describe("The keyboard shortcut to send"),
-      pageId: z.string().optional().describe("The ID of the page to send the keyboard shortcut to. If not provided, the active page will be used.")
+      key: z.enum(Object.values(KEYS_MAP) as [string, ...string[]]).describe("The key to press"),
+      pageId: z.string().optional().describe("The ID of the page to press the key on. If not provided, the active page will be used.")
     },
-    async ({ keys, pageId }) => {
+    async ({ key, pageId }) => {
       const pageData = pageManager.getPage(pageId);
       if (!pageData) {
         return {
           content: [{ type: "text", text: "No active page found" }]
         };
       }
-      await pageData.page.keyboard.press(keys as KeyInput);
+      await pageData.page.keyboard.press(key as KeyInput);
       return {
-        content: [{ type: "text", text: "Sent keyboard shortcut: " + keys }]
+        content: [{ type: "text", text: "Pressed key: " + key }]
+      };
+    }
+  );
+
+  // Press keys (with modifiers)
+  server.tool(
+    "press-keys",
+    "This tool presses multiple keys on the keyboard, you can use modifiers.",
+    {
+      keys: z.array(z.enum(Object.values(KEYS_MAP) as [string, ...string[]])).describe("The keys to press"),
+      modifiers: z.array(z.enum(Object.values(MODIFIER_KEYS_MAP) as [string, ...string[]])).optional().describe("Modifier keys to hold down during the entire sequence (e.g., 'ControlLeft', 'ShiftLeft', 'AltLeft', 'MetaLeft')"),
+      pageId: z.string().optional().describe("The ID of the page to press the keys on. If not provided, the active page will be used.")
+    },
+    async ({ keys, modifiers = [], pageId }) => {
+      const pageData = pageManager.getPage(pageId);
+      if (!pageData) {
+        return {
+          content: [{ type: "text", text: "No active page found" }]
+        };
+      }
+      // Press down all modifier keys first
+      for (const modifier of modifiers) {
+        await pageData.page.keyboard.down(modifier as KeyInput);
+      }
+      try {
+        // Press each key in sequence
+        for (const key of keys) {
+          await pageData.page.keyboard.press(key as KeyInput);
+        }
+      } finally {
+        // Release all modifier keys
+        for (const modifier of modifiers) {
+          await pageData.page.keyboard.up(modifier as KeyInput);
+        }
+      }
+      return {
+        content: [{ type: "text", text: "Pressed keys: " + keys.join(', ') + (modifiers.length > 0 ? ` with modifiers: ${modifiers.join(', ')}` : '') }]
       };
     }
   );
