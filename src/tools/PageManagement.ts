@@ -8,10 +8,10 @@ export const pageManagementTools = ({ pageManager, server }: { pageManager: Page
     "create-page",
     "This tool creates a new browser page",
     {
-      pageId: z.string().optional().describe("The ID of the page to create. If not provided, a random ID will be generated.")
+      purpose: z.string().describe("The purpose of the page. Will be used to improve the context of the page management.")
     },
-    async ({ pageId }) => {
-      const newPageId = await pageManager.createPage(pageId);
+    async ({ purpose }) => {
+      const newPageId = await pageManager.createPage(purpose);
       return {
         content: [{ type: "text", text: `Created new page with ID: ${newPageId}` }]
       };
@@ -54,10 +54,10 @@ export const pageManagementTools = ({ pageManager, server }: { pageManager: Page
     async () => {
       const pages = pageManager.getAllPageIds();
       const activePage = pageManager.getActivePageId();
-      let text = `Pages:\n\n| ID | Status | URL | Title |\n| --- | --- | --- | --- |\n`;
+      let text = `Pages:\n\n| ID | Status | Purpose | URL | Title |\n| --- | --- | --- | --- | --- |\n`;
       for (const id of pages) {
         const page = pageManager.getPage(id);
-        text += `| ${id} | ${id === activePage ? 'Active' : 'Inactive'} | ${page?.pageUrl || 'no url'} | ${page?.pageTitle || 'no title'} |\n`;
+        text += `| ${id} | ${id === activePage ? 'Active' : 'Inactive'} | ${page?.purpose || 'no purpose'} | ${page?.pageUrl || 'no url'} | ${page?.pageTitle || 'no title'} |\n`;
       }
       return {
         content: [{
